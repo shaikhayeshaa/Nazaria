@@ -1,16 +1,20 @@
-# nazaria
+# Nazaria (نَظَرِیَہ)
 
-A new Flutter project.
+A social media app for creatives, built using Flutter and Firebase. The name Nazaria comes from the Urdu language, meaning "Perspective."
 
-## Getting Started
+NAZARIA is designed for creative individuals — photographers, video editors, designers, and illustrators. Users select their creative category during signup and then create themed collections such as Nature, Portraits, or Wildlife, where they can showcase their work through posts.
 
-This project is a starting point for a Flutter application.
+# Tech Stack & Features
+Flutter for cross-platform development
+Firebase Authentication for secure signup/login
+Cloud Firestore to store and manage user data
+Firebase Storage for uploading media content
+AdMob Integration:
+- Interstitial ads on new post/collection creation
+- Banner ads integrated within the app
+Dark & Light Mode support
+Like & Comment functionality
+Read more / Read less caption toggle
+MVVM architecture pattern
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+📌 Upcoming features like Firebase Push Notifications are in development.
