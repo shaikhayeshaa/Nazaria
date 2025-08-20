@@ -15,6 +15,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Set<String> expandedPosts = {};
+
   @override
   void initState() {
     super.initState();
@@ -38,10 +40,12 @@ class _HomeState extends State<Home> {
   }
 
   final TextEditingController commentController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final posts = Provider.of<CollPostViewModel>(context).posts;
     final user = Provider.of<UserProvider>(context).currentUser;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
@@ -86,20 +90,20 @@ class _HomeState extends State<Home> {
             builder: (context, ref, child) {
               if (ref.posts.isEmpty) {
                 return Center(
-                    child: CircularProgressIndicator(
-                  strokeWidth: 6.sp,
-                ));
+                    child: CircularProgressIndicator(strokeWidth: 6.sp));
               }
+
               return Expanded(
-                  child: ListView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: posts.length,
-                itemBuilder: (context, index) {
-                  final post = posts[index];
-                  return Padding(
-                    padding: EdgeInsetsDirectional.only(
-                        bottom: 4.w, start: 4.w, end: 4.w),
-                    child: Container(
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    final post = posts[index];
+
+                    return Padding(
+                      padding: EdgeInsetsDirectional.only(
+                          bottom: 4.w, start: 4.w, end: 4.w),
+                      child: Container(
                         width: 40.w,
                         decoration: BoxDecoration(
                           color: MyColors.lesspurple,
@@ -134,27 +138,67 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                             Consumer<CollPostViewModel>(
-                                builder: (context, ref, child) {
-                              if (ref.posts[index].caption != "") {
+                              builder: (context, ref, child) {
+                                if (post.caption.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                final isExpanded =
+                                    expandedPosts.contains(post.postId);
+                                final shouldTrim = post.caption.length > 100;
+
+                                String displayText = shouldTrim && !isExpanded
+                                    ? '${post.caption.substring(0, 100)}...'
+                                    : post.caption;
+
                                 return Padding(
                                   padding: EdgeInsetsDirectional.only(
-                                      start: 4.w, bottom: 1.w),
+                                      start: 4.w, bottom: 1.w, end: 4.w),
                                   child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      post.caption,
-                                      style: GoogleFonts.alata(
-                                          fontSize: 16.sp,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          displayText,
+                                          style: GoogleFonts.alata(
+                                            fontSize: 16.sp,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary,
+                                          ),
+                                        ),
+                                        if (shouldTrim)
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                if (isExpanded) {
+                                                  expandedPosts
+                                                      .remove(post.postId);
+                                                } else {
+                                                  expandedPosts
+                                                      .add(post.postId);
+                                                }
+                                              });
+                                            },
+                                            child: Text(
+                                              isExpanded
+                                                  ? "Read less"
+                                                  : "Read more",
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 15.sp,
+                                                color: MyColors.purple,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                      ],
                                     ),
                                   ),
                                 );
-                              } else {
-                                return const SizedBox.shrink();
-                              }
-                            }),
+                              },
+                            ),
                             SizedBox(
                               height: 40.h,
                               child: ClipRRect(
@@ -179,188 +223,179 @@ class _HomeState extends State<Home> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Builder(
-                                    builder: (context) {
-                                      return GestureDetector(
-                                        onTap: () {
-                                          ref.togglelike(post.postId, user.uid);
-                                        },
-                                        child: Row(
-                                          spacing: 1.w,
-                                          children: [
-                                            Text(post.likes.length.toString()),
-                                            Icon(
-                                              post.likes.contains(user.uid)
-                                                  ? Icons.favorite
-                                                  : Icons.favorite_border,
-                                              color:
-                                                  post.likes.contains(user.uid)
-                                                      ? MyColors.purple
-                                                      : MyColors.grey,
-                                            ),
-                                          ],
-                                        ),
-                                      );
+                                  GestureDetector(
+                                    onTap: () {
+                                      ref.togglelike(post.postId, user.uid);
                                     },
+                                    child: Row(
+                                      spacing: 1.w,
+                                      children: [
+                                        Text(post.likes.length.toString()),
+                                        Icon(
+                                          post.likes.contains(user.uid)
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+                                          color: post.likes.contains(user.uid)
+                                              ? MyColors.purple
+                                              : MyColors.grey,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   Row(
                                     spacing: 1.w,
                                     children: [
                                       Text(
                                         post.commentsCount.toString(),
-                                        style: TextStyle(
-                                            color: Colors.grey.shade700),
                                       ),
                                       GestureDetector(
-                                          onTap: () async {
-                                            await getComments(post.postId);
-                                            showModalBottomSheet(
-                                              context: context,
-                                              isScrollControlled: true,
-                                              shape:
-                                                  const RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.vertical(
-                                                        top: Radius.circular(
-                                                            24)),
-                                              ),
-                                              builder: (context) {
-                                                return DraggableScrollableSheet(
-                                                  expand: false,
-                                                  initialChildSize: 0.5,
-                                                  minChildSize: 0.3,
-                                                  maxChildSize: 0.9,
-                                                  builder: (context,
-                                                      scrollController) {
-                                                    return Padding(
-                                                      padding: EdgeInsets.only(
-                                                        bottom: MediaQuery.of(
-                                                                context)
-                                                            .viewInsets
-                                                            .bottom,
-                                                      ),
-                                                      child: Column(
-                                                        children: [
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(12.0),
-                                                            child: Row(
-                                                              children: [
-                                                                Expanded(
-                                                                  child:
-                                                                      TextField(
-                                                                    controller:
-                                                                        commentController,
-                                                                    decoration:
-                                                                        InputDecoration(
-                                                                      hintText:
-                                                                          "Add a comment...",
-                                                                      border:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(16),
-                                                                      ),
-                                                                      contentPadding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          horizontal:
+                                        onTap: () async {
+                                          await getComments(post.postId);
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                      top: Radius.circular(24)),
+                                            ),
+                                            builder: (context) {
+                                              return DraggableScrollableSheet(
+                                                expand: false,
+                                                initialChildSize: 0.5,
+                                                minChildSize: 0.3,
+                                                maxChildSize: 0.9,
+                                                builder: (context,
+                                                    scrollController) {
+                                                  return Padding(
+                                                    padding: EdgeInsets.only(
+                                                      bottom:
+                                                          MediaQuery.of(context)
+                                                              .viewInsets
+                                                              .bottom,
+                                                    ),
+                                                    child: Column(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(12.0),
+                                                          child: Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child:
+                                                                    TextField(
+                                                                  controller:
+                                                                      commentController,
+                                                                  decoration:
+                                                                      InputDecoration(
+                                                                    hintText:
+                                                                        "Add a comment...",
+                                                                    border:
+                                                                        OutlineInputBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
                                                                               16),
                                                                     ),
+                                                                    contentPadding: const EdgeInsets
+                                                                        .symmetric(
+                                                                        horizontal:
+                                                                            16),
                                                                   ),
                                                                 ),
-                                                                IconButton(
-                                                                  icon: const Icon(
-                                                                      Icons
-                                                                          .send),
-                                                                  onPressed:
-                                                                      () async {
-                                                                    if (commentController
-                                                                        .text
-                                                                        .isNotEmpty) {
-                                                                      ref.postComment(
-                                                                        postId:
-                                                                            post.postId,
-                                                                        userId:
-                                                                            user.uid,
-                                                                        userName:
-                                                                            user.name,
-                                                                        userProfileUrl:
-                                                                            user.profileImageUrl,
-                                                                        text: commentController
-                                                                            .text,
-                                                                      );
-                                                                    }
-                                                                    commentController
-                                                                        .clear();
-                                                                  },
+                                                              ),
+                                                              IconButton(
+                                                                icon: const Icon(
+                                                                    Icons.send),
+                                                                onPressed:
+                                                                    () async {
+                                                                  if (commentController
+                                                                      .text
+                                                                      .isNotEmpty) {
+                                                                    ref.postComment(
+                                                                      postId: post
+                                                                          .postId,
+                                                                      userId: user
+                                                                          .uid,
+                                                                      userName:
+                                                                          user.name,
+                                                                      userProfileUrl:
+                                                                          user.profileImageUrl,
+                                                                      text: commentController
+                                                                          .text,
+                                                                    );
+                                                                  }
+                                                                  commentController
+                                                                      .clear();
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child:
+                                                              ListView.builder(
+                                                            controller:
+                                                                scrollController,
+                                                            itemCount: ref
+                                                                .comments
+                                                                .length,
+                                                            itemBuilder:
+                                                                (context,
+                                                                    index) {
+                                                              final comment =
+                                                                  ref.comments[
+                                                                      index];
+                                                              return ListTile(
+                                                                leading:
+                                                                    CircleAvatar(
+                                                                  backgroundImage:
+                                                                      NetworkImage(
+                                                                          comment
+                                                                              .userProfileUrl),
                                                                 ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: ListView
-                                                                .builder(
-                                                              controller:
-                                                                  scrollController,
-                                                              itemCount: ref
-                                                                  .comments
-                                                                  .length,
-                                                              itemBuilder:
-                                                                  (context,
-                                                                      index) {
-                                                                final comment =
-                                                                    ref.comments[
-                                                                        index];
-                                                                return ListTile(
-                                                                  leading:
-                                                                      CircleAvatar(
-                                                                    backgroundImage:
-                                                                        NetworkImage(
-                                                                            comment.userProfileUrl),
+                                                                title: Text(comment
+                                                                    .userName),
+                                                                subtitle: Text(
+                                                                    comment
+                                                                        .text),
+                                                                trailing: Text(
+                                                                  timeAgo(comment
+                                                                      .timestamp),
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        10,
+                                                                    color: Colors
+                                                                        .grey,
                                                                   ),
-                                                                  title: Text(
-                                                                      comment
-                                                                          .userName),
-                                                                  subtitle: Text(
-                                                                      comment
-                                                                          .text),
-                                                                  trailing:
-                                                                      Text(
-                                                                    timeAgo(comment
-                                                                        .timestamp),
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          10,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            ),
+                                                                ),
+                                                              );
+                                                            },
                                                           ),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: Text(
-                                            "comments",
-                                          )),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: const Text("comments"),
+                                      ),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
                           ],
-                        )),
-                  );
-                },
-              ));
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
             },
           ),
         ],

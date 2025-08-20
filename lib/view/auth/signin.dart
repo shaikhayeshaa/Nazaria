@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nazaria/buildcontext/loc.dart';
 import 'package:nazaria/resources/colors.dart';
 import 'package:nazaria/resources/components/main_button.dart';
 import 'package:nazaria/util/routes/routes_name.dart';
@@ -60,7 +59,7 @@ class _SigninState extends State<Signin> {
                             Icons.email,
                             color: MyColors.grey,
                           ),
-                          hintText: context.loc.email,
+                          hintText: 'Email',
                           hintStyle: TextStyle(color: MyColors.grey),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -87,7 +86,7 @@ class _SigninState extends State<Signin> {
                             Icons.lock,
                             color: MyColors.grey,
                           ),
-                          hintText: context.loc.password,
+                          hintText: 'Password',
                           hintStyle: TextStyle(color: MyColors.grey),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -106,7 +105,7 @@ class _SigninState extends State<Signin> {
                     child: TextButton(
                         onPressed: () {},
                         child: Text(
-                          context.loc.forgotPassword,
+                          'Forgot Password?',
                           style: TextStyle(color: MyColors.blue),
                         )),
                   ),
@@ -115,7 +114,7 @@ class _SigninState extends State<Signin> {
                       padding: EdgeInsetsDirectional.only(start: 8.w, end: 8.w),
                       child: MainButton(
                           loading: ref.isLoading,
-                          title: context.loc.login,
+                          title: 'Log In',
                           onTap: () async {
                             if (_emailController.text.isEmpty ||
                                 _passwordController.text.isEmpty) {
@@ -136,7 +135,7 @@ class _SigninState extends State<Signin> {
                   }),
                   Padding(
                     padding: EdgeInsetsDirectional.only(top: 3.h, bottom: 1.h),
-                    child: Text(context.loc.orLogInBY),
+                    child: Text('Log in with'),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -172,14 +171,14 @@ class _SigninState extends State<Signin> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(context.loc.dontHaveAnAccount),
+                        Text('New to Nazaria? '),
                         GestureDetector(
                           onTap: () {
                             Navigator.pushNamed(
                                 context, RoutesName.selectCategory);
                           },
                           child: Text(
-                            context.loc.signup,
+                            'Sign Up',
                             style: TextStyle(color: MyColors.blue),
                           ),
                         )

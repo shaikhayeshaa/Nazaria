@@ -7,6 +7,7 @@ import 'package:nazaria/viewmodel/col_and_post_viewmodel.dart';
 import 'package:nazaria/viewmodel/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -27,6 +28,14 @@ class _ProfileState extends State<Profile> {
       Provider.of<CollPostViewModel>(context, listen: false).fetchUserPosts(
           Provider.of<UserProvider>(context, listen: false).currentUser.uid);
     });
+  }
+
+  final Uri gitHubUrl = Uri.parse("https://github.com/shaikhayeshaa");
+
+  Future<void> launch() async {
+    if (!await launchUrl(gitHubUrl, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $gitHubUrl');
+    }
   }
 
   @override
@@ -197,18 +206,27 @@ class _ProfileState extends State<Profile> {
             spacing: 2.w,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image(
-                  image: AssetImage('assets/blankglobe.png'),
-                  width: 5.h,
-                  height: 5.h),
-              Image(
-                  image: AssetImage('assets/blankinsta.png'),
-                  width: 5.h,
-                  height: 5.h),
-              Image(
-                  image: AssetImage('assets/blankfb.png'),
-                  width: 5.h,
-                  height: 5.h),
+              GestureDetector(
+                onTap: () {},
+                child: Image(
+                    image: AssetImage('assets/blankglobe.png'),
+                    width: 5.h,
+                    height: 5.h),
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: Image(
+                    image: AssetImage('assets/blankinsta.png'),
+                    width: 5.h,
+                    height: 5.h),
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: Image(
+                    image: AssetImage('assets/blankfb.png'),
+                    width: 5.h,
+                    height: 5.h),
+              ),
             ],
           ),
           DefaultTabController(

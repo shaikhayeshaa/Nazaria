@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:nazaria/buildcontext/loc.dart';
 import 'package:nazaria/resources/colors.dart';
 import 'package:nazaria/resources/components/main_button.dart';
 import 'package:nazaria/viewmodel/auth_viewmodel.dart';
@@ -49,7 +47,7 @@ class _SignupState extends State<Signup> {
               child: Image(image: AssetImage('assets/welcome.png'))),
           Positioned(
             bottom: 0,
-            left: 0, // ✅ Add this
+            left: 0,
             right: 0,
             child: Container(
               height: 90.h,
@@ -95,7 +93,7 @@ class _SignupState extends State<Signup> {
                             Icons.person,
                             color: MyColors.grey,
                           ),
-                          hintText: context.loc.name,
+                          hintText: 'Name',
                           hintStyle: TextStyle(color: MyColors.grey),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -121,7 +119,7 @@ class _SignupState extends State<Signup> {
                             Icons.email,
                             color: MyColors.grey,
                           ),
-                          hintText: context.loc.email,
+                          hintText: 'Email',
                           hintStyle: TextStyle(color: MyColors.grey),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -146,7 +144,7 @@ class _SignupState extends State<Signup> {
                             Icons.lock,
                             color: MyColors.grey,
                           ),
-                          hintText: context.loc.password,
+                          hintText: 'Password',
                           hintStyle: TextStyle(color: MyColors.grey),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -171,7 +169,7 @@ class _SignupState extends State<Signup> {
                             Icons.edit,
                             color: MyColors.grey,
                           ),
-                          hintText: context.loc.bio,
+                          hintText: 'Bio',
                           hintStyle: TextStyle(color: MyColors.grey),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -214,7 +212,7 @@ class _SignupState extends State<Signup> {
                       padding: EdgeInsets.only(top: 6.h, left: 8.w, right: 8.w),
                       child: MainButton(
                           loading: ref.isLoading,
-                          title: context.loc.signup,
+                          title: "Sign Up",
                           onTap: () async {
                             if (_profileImage != null &&
                                 category != null &&
@@ -265,13 +263,13 @@ class _SignupState extends State<Signup> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(context.loc.alreadyHaveAnAccount),
+                        Text('Already have an account?'),
                         GestureDetector(
                           onTap: () {
                             Navigator.pop(context);
                           },
                           child: Text(
-                            context.loc.login,
+                            ' Sign In',
                             style: TextStyle(color: MyColors.blue),
                           ),
                         )

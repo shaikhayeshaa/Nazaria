@@ -31,7 +31,6 @@ class _BottomNavState extends State<BottomNav> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 

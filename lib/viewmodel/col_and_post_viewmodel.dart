@@ -137,7 +137,6 @@ class CollPostViewModel with ChangeNotifier {
 
       final collectionId = const Uuid().v4();
 
-      // ✅ Upload image first
       final firebaseImageUrl = await _collPostRepo.uploadProfileImage(
           File(coverImageUrl), collectionId);
 

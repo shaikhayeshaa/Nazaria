@@ -16,6 +16,24 @@ class CollectionsAndPostsRepo {
         .set(collection.toJson());
   }
 
+  // Future<String> uploadProfileImage(File file, String collectionId) async {
+  //   final url =
+  //       Uri.parse('https://api.cloudinary.com/v1_1/dvndjvzqh/image/upload');
+
+  //   final request = http.MultipartRequest('POST', url)
+  //     ..fields['upload_preset'] = 'flutter_unsigned_nazaria'
+  //     ..files.add(await http.MultipartFile.fromPath('file', file.path));
+
+  //   final response = await request.send();
+  //   if (response.statusCode == 200) {
+  //     final resStr = await response.stream.bytesToString();
+  //     final data = json.decode(resStr);
+  //     return data['secure_url'];
+  //   } else {
+  //     throw Exception("Image upload failed");
+  //   }
+  // }
+
   Future<String> uploadProfileImage(File file, String collectionId) async {
     final ref = _storage.ref().child("collectionImages/$collectionId.jpg");
     await ref.putFile(file);

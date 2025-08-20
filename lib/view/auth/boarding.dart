@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nazaria/buildcontext/loc.dart';
 import 'package:nazaria/resources/colors.dart';
 import 'package:nazaria/util/routes/routes_name.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -34,7 +33,7 @@ class _BoardingState extends State<Boarding> {
           Positioned(
             bottom: 20.h,
             child: Text(
-              context.loc.slogan,
+              'Welcome to Nazaria',
               style: GoogleFonts.akronim(
                 color: MyColors.white,
                 fontSize: 20.sp,
@@ -58,7 +57,7 @@ class _BoardingState extends State<Boarding> {
                   ),
                 ),
                 child: Text(
-                  context.loc.getStarted,
+                  'Get Started',
                   style: GoogleFonts.poppins(
                     color: MyColors.white,
                     fontSize: 18.sp,

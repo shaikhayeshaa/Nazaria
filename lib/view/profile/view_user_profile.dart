@@ -5,7 +5,6 @@ import 'package:nazaria/resources/components/custom_clipper.dart';
 import 'package:nazaria/util/routes/routes_name.dart';
 import 'package:nazaria/viewmodel/col_and_post_viewmodel.dart';
 import 'package:nazaria/viewmodel/user_provider.dart';
-
 import 'package:nazaria/viewmodel/view_user_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -61,13 +60,52 @@ class _ViewUserProfileState extends State<ViewUserProfile> {
               Positioned(
                 top: 3.h,
                 right: 4.w,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 2.h, left: 2.w),
-                  child: IconButton(
-                    icon: Icon(Icons.settings, size: 24.sp),
-                    color: MyColors.white,
-                    onPressed: () {},
-                  ),
+                child: Consumer<ViewUserViewModel>(
+                  builder: (context, ref, child) {
+                    return GestureDetector(
+                      onTap: () async {
+                        if (ref.isFollowing) {
+                          await ref.unfollowUser(
+                            currentUserId: currentUser.uid,
+                            targetUserId: user!.uid,
+                          );
+                        } else {
+                          await ref.followUser(
+                            currentUserId: currentUser.uid,
+                            currentUserName: currentUser.name,
+                            currentUserImage: currentUser.profileImageUrl,
+                            targetUserId: user!.uid,
+                            targetUserName: user.name,
+                            targetUserImage: user.profileImageUrl,
+                          );
+                        }
+
+                        ref.checkIfFollowing(currentUser.uid);
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 2.h, left: 2.w),
+                        child: Container(
+                          width: 30.w,
+                          height: 6.h,
+                          decoration: BoxDecoration(
+                            color: MyColors.lesspurple,
+                            border: Border.all(color: MyColors.grey, width: 1),
+                            borderRadius: BorderRadius.circular(10.sp),
+                          ),
+                          child: Center(
+                            child: Text(
+                              ref.isFollowing ? 'Unfollow' : 'Follow',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                                color: MyColors.grey,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
               Positioned(
@@ -226,49 +264,6 @@ class _ViewUserProfileState extends State<ViewUserProfile> {
                   width: 5.h,
                   height: 5.h),
             ],
-          ),
-          Consumer<ViewUserViewModel>(
-            builder: (context, ref, child) {
-              return GestureDetector(
-                onTap: () async {
-                  if (ref.isFollowing) {
-                    await ref.unfollowUser(
-                      currentUserId: currentUser.uid,
-                      targetUserId: user!.uid,
-                    );
-                  } else {
-                    await ref.followUser(
-                      currentUserId: currentUser.uid,
-                      currentUserName: currentUser.name,
-                      currentUserImage: currentUser.profileImageUrl,
-                      targetUserId: user!.uid,
-                      targetUserName: user.name,
-                      targetUserImage: user.profileImageUrl,
-                    );
-                  }
-
-                  ref.checkIfFollowing(currentUser.uid);
-                },
-                child: Container(
-                  width: 30.w,
-                  height: 6.h,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: MyColors.grey, width: 1),
-                    borderRadius: BorderRadius.circular(10.sp),
-                  ),
-                  child: Center(
-                    child: Text(
-                      ref.isFollowing ? 'Unfollow' : 'Follow',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: MyColors.grey,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
           ),
           DefaultTabController(
             length: 2,

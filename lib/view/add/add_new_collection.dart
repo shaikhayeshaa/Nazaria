@@ -75,6 +75,18 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
                       return;
                     }
 
+                    // final picked = await ImagePicker()
+                    //     .pickImage(source: ImageSource.gallery);
+                    // if (picked != null) {
+                    //   await addNewCollection(
+                    //     userId: userId,
+                    //     title: title,
+                    //     coverImageUrl: picked.path, // local path for File()
+                    //     category: category,
+                    //     context: context,
+                    //   );
+                    // }
+
                     await ref.addNewCollection(
                       userId: user.uid,
                       title: _titleController.text,
@@ -84,7 +96,9 @@ class _AddCollectionScreenState extends State<AddCollectionScreen> {
                     );
                   },
                   icon: const Icon(Icons.add_box),
-                  label: const Text("Create Collection"),
+                  label: ref.isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text("Add Collection"),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 32, vertical: 16),

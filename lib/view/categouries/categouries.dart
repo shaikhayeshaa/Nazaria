@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:nazaria/resources/ads_helper.dart';
 import 'package:nazaria/resources/colors.dart';
 import 'package:nazaria/util/routes/routes_name.dart';
 import 'package:nazaria/viewmodel/col_and_post_viewmodel.dart';
@@ -15,13 +17,43 @@ class Categouries extends StatefulWidget {
 }
 
 class _CategouriesState extends State<Categouries> {
+  BannerAd? _bannerAd;
+  bool _isBannerAdLoaded = false;
+
   @override
   void initState() {
     super.initState();
+
     Future.microtask(() {
       Provider.of<CollPostViewModel>(context, listen: false).fetchCollections();
       Provider.of<ViewUserViewModel>(context, listen: false).fetchAllUsers();
     });
+
+    _bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: AdsHelper.bannerAdUnitId,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          setState(() {
+            _isBannerAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          ad.dispose();
+          print('Ad failed to load: $error');
+          setState(() {
+            _isBannerAdLoaded = false;
+          });
+        },
+      ),
+    )..load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
   }
 
   @override
@@ -34,7 +66,7 @@ class _CategouriesState extends State<Categouries> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -59,6 +91,13 @@ class _CategouriesState extends State<Categouries> {
                   ),
                 ),
               ),
+              SizedBox(height: 1.h),
+              if (_bannerAd != null && _isBannerAdLoaded)
+                SizedBox(
+                  width: _bannerAd!.size.width.toDouble(),
+                  height: _bannerAd!.size.height.toDouble(),
+                  child: AdWidget(ad: _bannerAd!),
+                ),
               Padding(
                 padding: EdgeInsetsDirectional.only(
                     top: 2.h, start: 3.w, bottom: 1.h),
@@ -190,8 +229,8 @@ class _CategouriesState extends State<Categouries> {
                               ref.fetchCollections();
                             });
                           },
-                          child: _buildTopicCard(
-                              "UI DESIGN", "assets/nonamed.png")),
+                          child:
+                              _buildTopicCard("DESIGN", "assets/nonamed.png")),
                       SizedBox(
                         width: 2.w,
                       ),

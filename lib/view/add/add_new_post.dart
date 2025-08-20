@@ -98,15 +98,29 @@ class _AddPostScreenState extends State<AddPostScreen> {
               Consumer<CollPostViewModel>(builder: (context, ref, child) {
                 return ElevatedButton.icon(
                   onPressed: () {
-                    ref.addNewPost(
-                        mediaFile: _mediaFile!,
-                        userId: user.uid,
-                        caption: _captionController.text,
-                        category: user.category,
-                        collectionId: _selectedCollection!,
-                        context: context,
-                        userName: user.name,
-                        userProfileUrl: user.profileImageUrl);
+                    if (_mediaFile != null && _selectedCollection != null) {
+                      ref.addNewPost(
+                          mediaFile: _mediaFile!,
+                          userId: user.uid,
+                          caption: _captionController.text,
+                          category: user.category,
+                          collectionId: _selectedCollection!,
+                          context: context,
+                          userName: user.name,
+                          userProfileUrl: user.profileImageUrl);
+                    } else if (_mediaFile == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Please select a media file"),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Please select a collection"),
+                        ),
+                      );
+                    }
                   },
                   icon: const Icon(Icons.upload),
                   label: const Text("Upload Post"),

@@ -31,7 +31,6 @@ class _SplashState extends State<Splash> {
   }
 
   @override
-  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {

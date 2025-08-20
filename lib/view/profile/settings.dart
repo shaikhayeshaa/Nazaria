@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nazaria/util/routes/routes_name.dart';
+import 'package:nazaria/util/shared_prefs/shared_prefs.dart';
 import 'package:nazaria/util/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -13,7 +16,7 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   bool isDarkMode = false;
   bool notificationsEnabled = true;
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -50,6 +53,17 @@ class _SettingsState extends State<Settings> {
               trailing: Icon(Icons.arrow_forward_ios, size: 4.w),
               onTap: () {
                 // Handle password change
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout, size: 5.w),
+              title: Text('Logout', style: TextStyle(fontSize: 16.sp)),
+              trailing: Icon(Icons.arrow_forward_ios, size: 4.w),
+              onTap: () {
+                _auth.signOut();
+                SharedPrefs.setBool('isLoggedIn', false);
+                Navigator.pushNamedAndRemoveUntil(
+                    context, RoutesName.signin, (route) => false);
               },
             ),
             SizedBox(height: 3.h),
